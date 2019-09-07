@@ -1,4 +1,4 @@
-package com.example.camera_app
+package com.codinglatte.camera_app
 
 import android.os.Bundle
 
