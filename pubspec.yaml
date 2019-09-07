@@ -13,7 +13,9 @@ dependencies:
   camera:
   path_provider:
   path:
+  image_gallery_saver:
   cupertino_icons: ^0.1.2
+  permission_handler:
 
 dev_dependencies:
   flutter_test:
