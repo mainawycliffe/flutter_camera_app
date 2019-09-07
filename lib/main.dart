@@ -1,24 +1,28 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
+import 'package:camera_app/camera_controls.dart';
+import 'package:camera_app/video_recording_controls.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 Future main() async {
   final cameras = await availableCameras();
-  final firstCamera = cameras.first;
 
   runApp(MyApp(
-    camera: firstCamera,
+    cameras: cameras,
   ));
 }
 
 class MyApp extends StatelessWidget {
   MyApp({
     Key key,
-    @required this.camera,
+    @required this.cameras,
   }) : super(key: key);
 
-  final CameraDescription camera;
+  final List<CameraDescription> cameras;
 
   @override
   Widget build(BuildContext context) {
@@ -27,34 +31,22 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(
-        title: 'Flutter Demo Home Page',
-        camera: camera,
-      ),
+      home: MyHomePage(cameras: cameras),
     );
   }
 }
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({
-    Key key,
-    this.title,
-    @required this.camera,
-  }) : super(key: key);
+  MyHomePage({Key key, @required this.cameras}) : super(key: key);
 
-  final CameraDescription camera;
-  final String title;
+  final List<CameraDescription> cameras;
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: null,
-        title: Text(title),
-      ),
       body: Center(
         child: Container(
           child: CameraWidget(
-            camera: camera,
+            cameras: cameras,
           ),
         ),
       ),
@@ -65,10 +57,10 @@ class MyHomePage extends StatelessWidget {
 class CameraWidget extends StatefulWidget {
   CameraWidget({
     Key key,
-    @required this.camera,
+    @required this.cameras,
   }) : super(key: key);
 
-  final CameraDescription camera;
+  final List<CameraDescription> cameras;
 
   _CameraWidgetState createState() => _CameraWidgetState();
 }
@@ -76,15 +68,18 @@ class CameraWidget extends StatefulWidget {
 class _CameraWidgetState extends State<CameraWidget> {
   CameraController _controller;
   Future<void> _initializeControllerFuture;
+  bool _isVideoRecordingMode = false;
+  bool _isRecording = false;
 
   @override
   void initState() {
     super.initState();
+
     // To display the current output from the camera,
     // create a CameraController.
     _controller = CameraController(
       // Get a specific camera from the list of available cameras.
-      widget.camera,
+      widget.cameras.first,
       // Define the resolution to use - from low - max (highest resolution available).
       ResolutionPreset.max,
     );
@@ -121,35 +116,52 @@ class _CameraWidgetState extends State<CameraWidget> {
             bottom: 0,
             left: 0,
             right: 0,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  IconButton(
-                    iconSize: 40,
-                    icon: Icon(Icons.camera_roll),
-                    onPressed: () {
-                      _capture();
-                    },
-                  ),
-                  IconButton(
-                    iconSize: 60,
-                    icon: Icon(Icons.camera),
-                    onPressed: () {
-                      _capture();
-                    },
-                  ),
-                  IconButton(
-                    iconSize: 40,
-                    icon: Icon(Icons.camera_front),
-                    onPressed: () {
-                      _capture();
-                    },
-                  )
-                ],
+            child: Container(
+              color: Colors.black.withOpacity(0.2),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        if (!_isVideoRecordingMode)
+                          CameraControls(
+                            recordVideo: () {
+                              setState(() {
+                                _isVideoRecordingMode = true;
+                              });
+                            },
+                            takePicture: _capture,
+                            switchCameras: () {},
+                          ),
+                        if (_isVideoRecordingMode)
+                          VideoRecordingControls(
+                            switchCameras: () {},
+                            pause: () {},
+                            stop: () {
+                              setState(() {
+                                _isRecording = false;
+                              });
+                            },
+                            isRecording: _isRecording,
+                            switchToStillPhotos: () {
+                              setState(() {
+                                _isVideoRecordingMode = false;
+                              });
+                            },
+                            recordVideo: () {
+                              setState(() {
+                                _isRecording = true;
+                              });
+                            },
+                          )
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           )
@@ -165,16 +177,17 @@ class _CameraWidgetState extends State<CameraWidget> {
       // Ensure that the camera is initialized.
       await _initializeControllerFuture;
 
-      // Construct the path where the image should be saved using the path
-      // package.
-      final path = join(
-        // Store the picture in the temp directory.
-        // Find the temp directory using the `path_provider` plugin.
-        (await getTemporaryDirectory()).path,
-        '${DateTime.now()}.png',
-      );
+      var str = "";
 
-      // Attempt to take a picture and log where it's been saved.
+      if (Platform.isAndroid)
+        str = (await getApplicationSupportDirectory()).path;
+      else
+        str = (await getApplicationSupportDirectory()).path;
+
+      final path = join(str, '${DateTime.now()}.png');
+
+      print(path);
+
       await _controller.takePicture(path);
     } catch (e) {
       // If an error occurs, log the error to the console.
