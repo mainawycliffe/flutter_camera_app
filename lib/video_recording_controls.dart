@@ -42,25 +42,34 @@ class VideoRecordingControls extends StatelessWidget {
           SizedBox(
             width: 10,
           ),
+          if (!isRecording)
           RawMaterialButton(
             child: Icon(
-              isRecording ? Icons.stop : Icons.fiber_manual_record,
+                Icons.fiber_manual_record,
+                color: Colors.red,
+                size: 20,
+              ),
+              shape: new CircleBorder(),
+              elevation: 2.0,
+              fillColor: Colors.white,
+              padding: EdgeInsets.all(30.0),
+              onPressed: () {
+                recordVideo();
+              },
+            ),
+          if (isRecording)
+            RawMaterialButton(
+              child: Icon(
+                Icons.stop,
               color: Colors.red,
               size: 40,
             ),
             shape: new CircleBorder(),
             elevation: 2.0,
             fillColor: Colors.white,
-            padding: const EdgeInsets.all(15.0),
+              padding: EdgeInsets.all(20.0),
             onPressed: () {
-              // toggle between pause and stop
-              if (isRecording) {
-                // if its recording, stop
                 stop();
-              } else {
-                // record video action
-                recordVideo();
-              }
             },
           ),
           SizedBox(
