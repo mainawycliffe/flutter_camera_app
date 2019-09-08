@@ -197,7 +197,7 @@ class _CameraWidgetState extends State<CameraWidget> {
     });
   }
 
-  void _capture() async {
+  void _capture(BuildContext context) async {
     // Take the Picture in a try / catch block. If anything goes wrong,
     // catch the error.
     try {
@@ -223,6 +223,11 @@ class _CameraWidgetState extends State<CameraWidget> {
             await PermissionsService().requestPermissionToGallery();
 
         if (!isGranted) {
+          _showMessage(
+            context,
+            "Permision Denied. Image was not saved to your Gallery!",
+            color: Colors.red,
+          );
           return;
         }
       }
@@ -233,8 +238,24 @@ class _CameraWidgetState extends State<CameraWidget> {
 
       await ImageGallerySaver.saveImage(y);
     } catch (e) {
-      // If an error occurs, log the error to the console.
-      print(e);
+      _showMessage(
+        context,
+        "Error! ${e.toString()}",
+        color: Colors.red,
+      );
     }
+    }
+
+  /// Show snakbar message, you can customize text color for errors
+  _showMessage(BuildContext context, String message,
+      {Color color: Colors.white}) {
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: TextStyle(color: color),
+      ),
+    );
+
+    Scaffold.of(context).showSnackBar(snackBar);
   }
 }
