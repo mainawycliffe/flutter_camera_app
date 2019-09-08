@@ -12,6 +12,11 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
+enum CameraMode {
+  PhotosMode,
+  VideoMode,
+}
+
 Future main() async {
   final cameras = await availableCameras();
 
@@ -72,7 +77,7 @@ class CameraWidget extends StatefulWidget {
 class _CameraWidgetState extends State<CameraWidget> {
   CameraController _controller;
   Future<void> _initializeControllerFuture;
-  bool _isVideoRecordingMode = false;
+  CameraMode _cameraMode = CameraMode.PhotosMode;
   bool _isRecording = false;
 
   static AudioCache audioPlayer = AudioCache(respectSilence: true);
@@ -133,13 +138,9 @@ class _CameraWidgetState extends State<CameraWidget> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        if (!_isVideoRecordingMode)
+                        if (_cameraMode == CameraMode.PhotosMode)
                           CameraControls(
-                            recordVideo: () {
-                              setState(() {
-                                _isVideoRecordingMode = true;
-                              });
-                            },
+                            toggleCameraMode: _toggleCameraMode,
                             takePicture: _capture,
                             switchCameras: () {},
                           ),
@@ -153,16 +154,7 @@ class _CameraWidgetState extends State<CameraWidget> {
                               });
                             },
                             isRecording: _isRecording,
-                            switchToStillPhotos: () {
-                              setState(() {
-                                _isVideoRecordingMode = false;
-                              });
-                            },
-                            recordVideo: () {
-                              setState(() {
-                                _isRecording = true;
-                              });
-                            },
+                            toggleCameraMode: _toggleCameraMode,
                           )
                       ],
                     ),
@@ -174,6 +166,15 @@ class _CameraWidgetState extends State<CameraWidget> {
         ],
       ),
     );
+  }
+
+
+  void _toggleCameraMode() {
+    setState(() {
+      _cameraMode = _cameraMode == CameraMode.PhotosMode
+          ? CameraMode.VideoMode
+          : CameraMode.PhotosMode;
+    });
   }
 
   void _capture() async {

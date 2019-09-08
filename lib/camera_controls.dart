@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class CameraControls extends StatelessWidget {
   final Function takePicture;
-  final Function recordVideo;
+  final Function toggleCameraMode;
   final Function switchCameras;
 
   const CameraControls({
     Key key,
     @required this.takePicture,
-    @required this.recordVideo,
+    @required this.toggleCameraMode,
     @required this.switchCameras,
   }) : super(key: key);
 
@@ -63,7 +63,7 @@ class CameraControls extends StatelessWidget {
             fillColor: Colors.white,
             padding: const EdgeInsets.all(15.0),
             onPressed: () {
-              recordVideo();
+              toggleCameraMode();
             },
           ),
         ],

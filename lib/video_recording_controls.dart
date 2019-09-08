@@ -5,7 +5,7 @@ class VideoRecordingControls extends StatelessWidget {
   final Function recordVideo;
   final Function pause;
   final Function switchCameras;
-  final Function switchToStillPhotos;
+  final Function toggleCameraMode;
   final bool isRecording;
 
   const VideoRecordingControls({
@@ -14,7 +14,7 @@ class VideoRecordingControls extends StatelessWidget {
     @required this.pause,
     @required this.stop,
     this.isRecording = false,
-    @required this.switchToStillPhotos,
+    @required this.toggleCameraMode,
     @required this.recordVideo,
   }) : super(key: key);
 
@@ -91,7 +91,7 @@ class VideoRecordingControls extends StatelessWidget {
               fillColor: Colors.white,
               padding: const EdgeInsets.all(15.0),
               onPressed: () {
-                switchToStillPhotos();
+                toggleCameraMode();
               },
             ),
         ],
