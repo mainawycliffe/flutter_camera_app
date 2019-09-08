@@ -231,7 +231,10 @@ class _CameraWidgetState extends State<CameraWidget> {
     // for iOS optimization
     _controller.prepareForVideoRecording();
 
-    final Directory extDir = await getExternalStorageDirectory();
+    final Directory extDir = Platform.isAndroid
+        ? await getExternalStorageDirectory()
+        : await getApplicationDocumentsDirectory();
+
     final String dirPath = '${extDir.path}/Movies';
     await Directory(dirPath).create(recursive: true);
     _recordedVideoSavePath =
