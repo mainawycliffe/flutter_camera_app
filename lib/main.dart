@@ -1,10 +1,13 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:camera_app/camera_controls.dart';
+import 'package:camera_app/permisons.dart';
 import 'package:camera_app/video_recording_controls.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -177,18 +180,30 @@ class _CameraWidgetState extends State<CameraWidget> {
       // Ensure that the camera is initialized.
       await _initializeControllerFuture;
 
-      var str = "";
-
-      if (Platform.isAndroid)
-        str = (await getApplicationSupportDirectory()).path;
-      else
-        str = (await getApplicationSupportDirectory()).path;
-
-      final path = join(str, '${DateTime.now()}.png');
-
-      print(path);
+      final path = join(
+        (await getTemporaryDirectory()).path,
+        '${DateTime.now()}.png',
+      );
 
       await _controller.takePicture(path);
+
+      // attempt to save to gallery
+      bool hasPermision = await PermissionsService().hasPhotosPermission();
+
+      // request for permision if not given
+      if (!hasPermision) {
+        bool isGranted = await PermissionsService().requestPhotosPermission();
+
+        if (!isGranted) {
+          return;
+        }
+      }
+
+      var image = await File(path).readAsBytes();
+
+      var y = Uint8List.fromList(image);
+
+      await ImageGallerySaver.saveImage(y);
     } catch (e) {
       // If an error occurs, log the error to the console.
       print(e);
