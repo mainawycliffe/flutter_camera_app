@@ -43,8 +43,8 @@ class VideoRecordingControls extends StatelessWidget {
             width: 10,
           ),
           if (!isRecording)
-          RawMaterialButton(
-            child: Icon(
+            RawMaterialButton(
+              child: Icon(
                 Icons.fiber_manual_record,
                 color: Colors.red,
                 size: 20,
@@ -61,17 +61,17 @@ class VideoRecordingControls extends StatelessWidget {
             RawMaterialButton(
               child: Icon(
                 Icons.stop,
-              color: Colors.red,
-              size: 40,
-            ),
-            shape: new CircleBorder(),
-            elevation: 2.0,
-            fillColor: Colors.white,
+                color: Colors.red,
+                size: 40,
+              ),
+              shape: new CircleBorder(),
+              elevation: 2.0,
+              fillColor: Colors.white,
               padding: EdgeInsets.all(20.0),
-            onPressed: () {
+              onPressed: () {
                 stop();
-            },
-          ),
+              },
+            ),
           SizedBox(
             width: 10,
           ),

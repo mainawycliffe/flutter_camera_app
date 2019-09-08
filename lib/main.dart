@@ -144,17 +144,14 @@ class _CameraWidgetState extends State<CameraWidget> {
                             takePicture: _capture,
                             switchCameras: () {},
                           ),
-                        if (_isVideoRecordingMode)
+                        if (_cameraMode == CameraMode.VideoMode)
                           VideoRecordingControls(
-                            switchCameras: () {},
-                            pause: () {},
-                            stop: () {
-                              setState(() {
-                                _isRecording = false;
-                              });
-                            },
+                            switchCameras: _switchCamera,
+                            pause: _pauseVideoRecording,
+                            stop: _stopVideoRecording,
                             isRecording: _isRecording,
                             toggleCameraMode: _toggleCameraMode,
+                            recordVideo: _startVideoRecording,
                           )
                       ],
                     ),
@@ -168,6 +165,21 @@ class _CameraWidgetState extends State<CameraWidget> {
     );
   }
 
+  void _switchCamera() {}
+
+  void _startVideoRecording() {
+    setState(() {
+      _isRecording = true;
+    });
+  }
+
+  void _pauseVideoRecording() {}
+
+  void _stopVideoRecording() {
+    setState(() {
+      _isRecording = false;
+    });
+  }
 
   void _toggleCameraMode() {
     setState(() {
