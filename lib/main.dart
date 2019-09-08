@@ -80,19 +80,24 @@ class _CameraWidgetState extends State<CameraWidget> {
   CameraMode _cameraMode = CameraMode.PhotosMode;
   bool _isRecording = false;
 
+  CameraDescription _currentSelectedCamera;
+
   static AudioCache audioPlayer = AudioCache(respectSilence: true);
 
   @override
   void initState() {
     super.initState();
-
     // To display the current output from the camera,
     // create a CameraController.
+
+    _currentSelectedCamera = widget.cameras.first;
+
     _controller = CameraController(
       // Get a specific camera from the list of available cameras.
-      widget.cameras.first,
+      _currentSelectedCamera,
       // Define the resolution to use - from low - max (highest resolution available).
       ResolutionPreset.max,
+      enableAudio: true,
     );
 
     // Next, initialize the controller. This returns a Future.
@@ -139,7 +144,7 @@ class _CameraWidgetState extends State<CameraWidget> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         if (_cameraMode == CameraMode.PhotosMode)
-                          _cameraControls(),
+                          _cameraControls(context),
                         if (_cameraMode == CameraMode.VideoMode)
                           _videoRecordingControls()
                       ],
@@ -154,11 +159,11 @@ class _CameraWidgetState extends State<CameraWidget> {
     );
   }
 
-  CameraControls _cameraControls() {
+  CameraControls _cameraControls(BuildContext context) {
     return CameraControls(
       toggleCameraMode: _toggleCameraMode,
-      takePicture: _capture,
-      switchCameras: () {},
+      takePicture: () => _capture(context),
+      switchCameras: _switchCamera,
     );
   }
 
@@ -173,7 +178,48 @@ class _CameraWidgetState extends State<CameraWidget> {
     );
   }
 
-  void _switchCamera() {}
+  Future _switchCamera() async {
+    // loop through all cameras and find current camera, then move to next
+    for (var camera in widget.cameras) {
+      if (camera.name == _currentSelectedCamera.name) {
+        var x = widget.cameras.indexOf(camera);
+
+        setState(() {
+          // if the the last camera, move to first
+          if (x == widget.cameras.length - 1) {
+            _currentSelectedCamera = widget.cameras.first;
+          } else {
+            _currentSelectedCamera = widget.cameras[x + 1];
+          }
+        });
+
+        if (_controller != null) {
+          await _controller.dispose();
+        }
+
+        _controller = CameraController(
+          _currentSelectedCamera,
+          ResolutionPreset.max,
+          enableAudio: true,
+        );
+
+        // If the controller is updated then update the UI.
+        _controller.addListener(() {
+          if (mounted) setState(() {});
+          if (_controller.value.hasError) {
+            print('Camera error ${_controller.value.errorDescription}');
+          }
+        });
+
+        try {
+          _controller.initialize();
+        } on CameraException catch (e) {
+          print(e);
+        }
+        break;
+      }
+    }
+  }
 
   void _startVideoRecording() {
     setState(() {
@@ -244,7 +290,7 @@ class _CameraWidgetState extends State<CameraWidget> {
         color: Colors.red,
       );
     }
-    }
+  }
 
   /// Show snakbar message, you can customize text color for errors
   _showMessage(BuildContext context, String message,
