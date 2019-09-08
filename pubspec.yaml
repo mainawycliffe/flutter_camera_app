@@ -16,6 +16,7 @@ dependencies:
   image_gallery_saver:
   cupertino_icons: ^0.1.2
   permission_handler:
+  audioplayers:
 
 dev_dependencies:
   flutter_test:
@@ -23,3 +24,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/shutter.wav

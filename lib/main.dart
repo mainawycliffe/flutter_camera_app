@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
 import 'package:camera_app/camera_controls.dart';
 import 'package:camera_app/permisons.dart';
 import 'package:camera_app/video_recording_controls.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -73,6 +76,8 @@ class _CameraWidgetState extends State<CameraWidget> {
   Future<void> _initializeControllerFuture;
   bool _isVideoRecordingMode = false;
   bool _isRecording = false;
+
+  static AudioCache audioPlayer = AudioCache(respectSilence: true);
 
   @override
   void initState() {
@@ -186,6 +191,8 @@ class _CameraWidgetState extends State<CameraWidget> {
       );
 
       await _controller.takePicture(path);
+
+      await audioPlayer.play("shutter.wav");
 
       // attempt to save to gallery
       bool hasPermision = await PermissionsService().hasPhotosPermission();
