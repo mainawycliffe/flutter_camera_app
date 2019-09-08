@@ -232,10 +232,10 @@ class _CameraWidgetState extends State<CameraWidget> {
     _controller.prepareForVideoRecording();
 
     final Directory extDir = await getExternalStorageDirectory();
-    final String dirPath = '${extDir.path}/Movies/recorded';
+    final String dirPath = '${extDir.path}/Movies';
     await Directory(dirPath).create(recursive: true);
-    _recordedVideoSavePath = '$dirPath/${DateTime.now()}.mp4';
-    print(_recordedVideoSavePath);
+    _recordedVideoSavePath =
+        '$dirPath/${DateTime.now().millisecondsSinceEpoch.toString()}.mp4';
 
     try {
       await _controller.startVideoRecording(_recordedVideoSavePath);
