@@ -1,5 +1,7 @@
 # Flutter Camera App
 
+![Demo](demo.gif)
+
 A simple camera app using Flutter. It will be able to take still photos and record videos - with all controls available - from all devices cameras.
 
 Still a work in progress. More details incoming.
