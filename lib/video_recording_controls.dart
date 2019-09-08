@@ -5,9 +5,11 @@ class VideoRecordingControls extends StatelessWidget {
   final Function onStopRecordingBtnPressed;
   final Function onRecordVideoBtnPressed;
   final Function onPauseRecodingBtnPressed;
+  final Function onResumeRecodingBtnPressed;
   final Function onSwitchCamerasBtnPressed;
   final Function onToggleCameraModeBtnPressed;
   final bool isRecording;
+  final bool isRecordingPaused;
 
   const VideoRecordingControls({
     Key key,
@@ -16,6 +18,8 @@ class VideoRecordingControls extends StatelessWidget {
     @required this.onStopRecordingBtnPressed,
     @required this.onToggleCameraModeBtnPressed,
     @required this.onRecordVideoBtnPressed,
+    @required this.onResumeRecodingBtnPressed,
+    @required this.isRecordingPaused,
     this.isRecording = false,
   }) : super(key: key);
 
@@ -66,7 +70,7 @@ class VideoRecordingControls extends StatelessWidget {
           SizedBox(
             width: 10,
           ),
-          if (isRecording)
+          if (isRecording && !isRecordingPaused)
             RawMaterialButton(
               child: Icon(
                 Icons.pause,
@@ -78,6 +82,20 @@ class VideoRecordingControls extends StatelessWidget {
               padding: const EdgeInsets.all(15.0),
               onPressed: () {
                 onPauseRecodingBtnPressed();
+              },
+            ),
+          if (isRecording && isRecordingPaused)
+            RawMaterialButton(
+              child: Icon(
+                Icons.play_circle_outline,
+                color: Colors.black,
+              ),
+              shape: new CircleBorder(),
+              elevation: 2.0,
+              fillColor: Colors.white,
+              padding: const EdgeInsets.all(15.0),
+              onPressed: () {
+                onResumeRecodingBtnPressed();
               },
             ),
           if (!isRecording)

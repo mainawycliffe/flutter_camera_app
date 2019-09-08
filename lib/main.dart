@@ -78,9 +78,9 @@ class _CameraWidgetState extends State<CameraWidget> {
   CameraController _controller;
   Future<void> _initializeControllerFuture;
   CameraMode _cameraMode = CameraMode.PhotosMode;
-  bool _isRecording = false;
-
   CameraDescription _currentSelectedCamera;
+
+  String _recordedVideoSavePath;
 
   static AudioCache audioPlayer = AudioCache(respectSilence: true);
 
@@ -174,7 +174,9 @@ class _CameraWidgetState extends State<CameraWidget> {
       onStopRecordingBtnPressed: _stopVideoRecording,
       onToggleCameraModeBtnPressed: _toggleCameraMode,
       onRecordVideoBtnPressed: _startVideoRecording,
-      isRecording: _isRecording,
+      onResumeRecodingBtnPressed: _resumeVideoRecording,
+      isRecordingPaused: _controller.value.isRecordingPaused,
+      isRecording: _controller.value.isRecordingVideo,
     );
   }
 
@@ -221,18 +223,72 @@ class _CameraWidgetState extends State<CameraWidget> {
     }
   }
 
-  void _startVideoRecording() {
-    setState(() {
-      _isRecording = true;
-    });
+  Future _startVideoRecording() async {
+    if (_cameraMode != CameraMode.VideoMode) {
+      return;
+    }
+
+    // for iOS optimization
+    _controller.prepareForVideoRecording();
+
+    final Directory extDir = await getExternalStorageDirectory();
+    final String dirPath = '${extDir.path}/Movies/recorded';
+    await Directory(dirPath).create(recursive: true);
+    _recordedVideoSavePath = '$dirPath/${DateTime.now()}.mp4';
+    print(_recordedVideoSavePath);
+
+    try {
+      await _controller.startVideoRecording(_recordedVideoSavePath);
+    } on CameraException catch (e) {
+      print(e);
+      return;
+    }
+
+    setState(() {});
   }
 
-  void _pauseVideoRecording() {}
+  void _pauseVideoRecording() async {
+    if (_cameraMode != CameraMode.VideoMode) {
+      return;
+    }
 
-  void _stopVideoRecording() {
-    setState(() {
-      _isRecording = false;
-    });
+    try {
+      await _controller.pauseVideoRecording();
+    } on CameraException catch (e) {
+      print(e);
+      return;
+    }
+
+    setState(() {});
+  }
+
+  void _resumeVideoRecording() async {
+    if (_cameraMode != CameraMode.VideoMode) {
+      return;
+    }
+
+    try {
+      await _controller.resumeVideoRecording();
+    } on CameraException catch (e) {
+      print(e);
+      return;
+    }
+
+    setState(() {});
+  }
+
+  void _stopVideoRecording() async {
+    if (_cameraMode != CameraMode.VideoMode) {
+      return;
+    }
+
+    try {
+      await _controller.stopVideoRecording();
+    } on CameraException catch (e) {
+      print(e);
+    }
+
+    setState(() {});
   }
 
   void _toggleCameraMode() {
