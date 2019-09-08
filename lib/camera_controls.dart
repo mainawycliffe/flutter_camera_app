@@ -20,19 +20,7 @@ class CameraControls extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          RawMaterialButton(
-            child: Icon(
-              Icons.switch_camera,
-              color: Colors.black,
-            ),
-            shape: new CircleBorder(),
-            elevation: 2.0,
-            fillColor: Colors.white,
-            padding: const EdgeInsets.all(15.0),
-            onPressed: () {
-              switchCameras();
-            },
-          ),
+          SwitchCamerasButton(onSwitchCamerasBtnPressed: switchCameras),
           SizedBox(
             width: 20,
           ),
@@ -68,6 +56,32 @@ class CameraControls extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class SwitchCamerasButton extends StatelessWidget {
+  const SwitchCamerasButton({
+    Key key,
+    @required this.onSwitchCamerasBtnPressed,
+  }) : super(key: key);
+
+  final Function onSwitchCamerasBtnPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return RawMaterialButton(
+      child: Icon(
+        Icons.switch_camera,
+        color: Colors.black,
+      ),
+      shape: new CircleBorder(),
+      elevation: 2.0,
+      fillColor: Colors.white,
+      padding: const EdgeInsets.all(15.0),
+      onPressed: () {
+        onSwitchCamerasBtnPressed();
+      },
     );
   }
 }

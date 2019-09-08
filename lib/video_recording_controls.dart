@@ -26,18 +26,8 @@ class VideoRecordingControls extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          RawMaterialButton(
-            child: Icon(
-              Icons.switch_camera,
-              color: Colors.black,
-            ),
-            shape: new CircleBorder(),
-            elevation: 2.0,
-            fillColor: Colors.white,
-            padding: const EdgeInsets.all(15.0),
-            onPressed: () {
-              switchCameras();
-            },
+          SwitchCamerasButton(
+            onSwitchCamerasBtnPressed: onSwitchCamerasBtnPressed,
           ),
           SizedBox(
             width: 10,
