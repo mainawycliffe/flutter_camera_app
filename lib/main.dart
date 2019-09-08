@@ -139,20 +139,9 @@ class _CameraWidgetState extends State<CameraWidget> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         if (_cameraMode == CameraMode.PhotosMode)
-                          CameraControls(
-                            toggleCameraMode: _toggleCameraMode,
-                            takePicture: _capture,
-                            switchCameras: () {},
-                          ),
+                          _cameraControls(),
                         if (_cameraMode == CameraMode.VideoMode)
-                          VideoRecordingControls(
-                            switchCameras: _switchCamera,
-                            pause: _pauseVideoRecording,
-                            stop: _stopVideoRecording,
-                            isRecording: _isRecording,
-                            toggleCameraMode: _toggleCameraMode,
-                            recordVideo: _startVideoRecording,
-                          )
+                          _videoRecordingControls()
                       ],
                     ),
                   ],
@@ -162,6 +151,25 @@ class _CameraWidgetState extends State<CameraWidget> {
           )
         ],
       ),
+    );
+  }
+
+  CameraControls _cameraControls() {
+    return CameraControls(
+      toggleCameraMode: _toggleCameraMode,
+      takePicture: _capture,
+      switchCameras: () {},
+    );
+  }
+
+  VideoRecordingControls _videoRecordingControls() {
+    return VideoRecordingControls(
+      onSwitchCamerasBtnPressed: _switchCamera,
+      onPauseRecodingBtnPressed: _pauseVideoRecording,
+      onStopRecordingBtnPressed: _stopVideoRecording,
+      onToggleCameraModeBtnPressed: _toggleCameraMode,
+      onRecordVideoBtnPressed: _startVideoRecording,
+      isRecording: _isRecording,
     );
   }
 

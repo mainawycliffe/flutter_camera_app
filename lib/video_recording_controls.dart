@@ -1,21 +1,22 @@
+import 'package:camera_app/camera_controls.dart';
 import 'package:flutter/material.dart';
 
 class VideoRecordingControls extends StatelessWidget {
-  final Function stop;
-  final Function recordVideo;
-  final Function pause;
-  final Function switchCameras;
-  final Function toggleCameraMode;
+  final Function onStopRecordingBtnPressed;
+  final Function onRecordVideoBtnPressed;
+  final Function onPauseRecodingBtnPressed;
+  final Function onSwitchCamerasBtnPressed;
+  final Function onToggleCameraModeBtnPressed;
   final bool isRecording;
 
   const VideoRecordingControls({
     Key key,
-    @required this.switchCameras,
-    @required this.pause,
-    @required this.stop,
+    @required this.onSwitchCamerasBtnPressed,
+    @required this.onPauseRecodingBtnPressed,
+    @required this.onStopRecordingBtnPressed,
+    @required this.onToggleCameraModeBtnPressed,
+    @required this.onRecordVideoBtnPressed,
     this.isRecording = false,
-    @required this.toggleCameraMode,
-    @required this.recordVideo,
   }) : super(key: key);
 
   @override
@@ -44,7 +45,7 @@ class VideoRecordingControls extends StatelessWidget {
               fillColor: Colors.white,
               padding: EdgeInsets.all(30.0),
               onPressed: () {
-                recordVideo();
+                onRecordVideoBtnPressed();
               },
             ),
           if (isRecording)
@@ -59,7 +60,7 @@ class VideoRecordingControls extends StatelessWidget {
               fillColor: Colors.white,
               padding: EdgeInsets.all(20.0),
               onPressed: () {
-                stop();
+                onStopRecordingBtnPressed();
               },
             ),
           SizedBox(
@@ -76,7 +77,7 @@ class VideoRecordingControls extends StatelessWidget {
               fillColor: Colors.white,
               padding: const EdgeInsets.all(15.0),
               onPressed: () {
-                pause();
+                onPauseRecodingBtnPressed();
               },
             ),
           if (!isRecording)
@@ -90,7 +91,7 @@ class VideoRecordingControls extends StatelessWidget {
               fillColor: Colors.white,
               padding: const EdgeInsets.all(15.0),
               onPressed: () {
-                toggleCameraMode();
+                onToggleCameraModeBtnPressed();
               },
             ),
         ],
