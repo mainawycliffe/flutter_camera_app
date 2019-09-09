@@ -8,7 +8,7 @@ Still a work in progress. More details incoming.
 
 ## Run Demo
 
-To run the frontend, change directory to the `flutter` directory, and run `flutter run`. Make sure you have flutter [installed](https://flutter.dev/docs/get-started/install).
+Clone the repo, install all dependancies `flutter pub get` and run `flutter run`. Make sure you have flutter [installed](https://flutter.dev/docs/get-started/install).
 
 ## Help Needed
 
