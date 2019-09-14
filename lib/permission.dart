@@ -18,19 +18,19 @@ class PermissionsService {
   /// Requests the user permission to save photos and videos to the Gallery
   /// For Android, ExternalStorage, For iOS, Photos
   Future<bool> requestPermissionToGallery() async {
-    var permision =
+    var permission =
         Platform.isAndroid ? PermissionGroup.storage : PermissionGroup.photos;
 
-    return _requestPermission(permision);
+    return _requestPermission(permission);
   }
 
-  /// Check if the has permision to save photos to user gallery
+  /// Check if the has permission to save photos to user gallery
   /// For Android, ExternalStorage, For iOS, Photos
   Future<bool> hasGalleryWritePermission() async {
-    var permision =
+    var permission =
         Platform.isAndroid ? PermissionGroup.storage : PermissionGroup.photos;
 
-    return hasPermission(permision);
+    return hasPermission(permission);
   }
 
   Future<bool> hasPermission(PermissionGroup permission) async {
