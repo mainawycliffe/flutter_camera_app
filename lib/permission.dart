@@ -37,6 +37,6 @@ class PermissionsService {
     var permissionStatus =
         await _permissionHandler.checkPermissionStatus(permission);
 
-    return permissionStatus == PermissionStatus.granted;
+    return permissionStatus == PermissionStatus.disabled;
   }
 }
